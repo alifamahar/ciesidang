@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+  <title>CIEEE MAU SIDANGGG</title>
+  <link rel="icon" type="image/x-icon" href="pala.png">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Bellefair&family=Great+Vibes&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Jersey+20&family=Monsieur+La+Doulaise&family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      /* SEMUA PUTIH + GLOW */
+      --accent: #ffffff;
+      --line: rgba(255,255,255,.95);
+      --wallw: 4;
+
+      /* glass putih */
+      --glass: rgba(255,255,255,.10);
+
+      /* glow */
+      --glow: 0 0 10px rgba(255,255,255,.55),
+              0 0 22px rgba(255,255,255,.35),
+              0 0 42px rgba(255,255,255,.18);
+
+      --shadow: 0 18px 44px rgba(0, 0, 0, .45);
+      --radius: 18px;
+    }
+
+    body {
+      background: linear-gradient(#274561d7, #000000a9), url("bg4.jpg") no-repeat center / cover;
+      color: #fff;
+      font-family: 'Arial Black', Courier, monospace;
+      margin: 0;
+      min-height: 100vh;
+      width: 100vw;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      touch-action: none;
+      overflow: hidden;
+    }
+
+    body, h1, p, .btn, .restart-btn, .card-title, .card-text, .tiny-note {
+      color: #fff !important;
+      text-shadow: var(--glow);
+    }
+
+    h1 {
+      font-size: 2rem;
+      margin: 10px 0 10px;
+      text-transform: uppercase;
+      font-weight: 300;
+      font-family: "bellefair";
+    }
+
+    p {
+      font-size: .8rem;
+      font-family: "bellefair";
+      color: rgba(255,255,255,.88) !important;
+      margin: 0 0 10px;
+    }
+
+    #game-area {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      width: 100%;
+      max-width: 100vw;
+    }
+
+    #game-box {
+      position: relative;
+      border: 1px solid rgba(255, 255, 255, .35) !important;
+      background: linear-gradient(180deg, var(--glass), rgba(0, 0, 0, .18));
+      box-shadow: var(--shadow), var(--glow);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    canvas {
+      display: block;
+      background: transparent;
+      filter: drop-shadow(0 0 10px rgba(255,255,255,.35))
+              drop-shadow(0 0 22px rgba(255,255,255,.18));
+    }
+
+    .restart-btn {
+      margin-top: 14px;
+      padding: 10px 20px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.55) !important;
+      color: #fff !important;
+      border-radius: 10px;
+      font-family: "bellefair";
+      cursor: pointer;
+      box-shadow: 0 10px 22px rgba(0, 0, 0, .18), var(--glow);
+      transition: transform .15s ease, background .15s ease, border-color .15s ease;
+    }
+
+    .restart-btn:hover {
+      background: rgba(255,255,255,.12);
+      border-color: rgba(255,255,255,.75) !important;
+    }
+
+    .restart-btn:active{
+      transform: translateY(1px);
+    }
+
+    @media (max-width: 700px) {
+      #game-area {
+        flex-direction: column;
+        gap: 12px;
+      }
+    }
+
+    /* ========================= POPUP CARD ========================= */
+    .hidden {
+      display: none !important;
+    }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      display: grid;
+      place-items: center;
+      padding: 18px;
+      background: rgba(0, 0, 0, .45);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+
+    .card {
+      width: min(520px, 92vw);
+      background: rgba(255,255,255,.10) !important;
+      border: 1px solid rgba(255, 255, 255, .30) !important;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow), var(--glow) !important;
+      padding: 16px 16px 14px;
+      text-align: left;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: -2px;
+      background:
+        radial-gradient(1200px 400px at 20% 0%, rgba(255, 255, 255, .18), transparent 60%),
+        radial-gradient(900px 500px at 90% 120%, rgba(255, 255, 255, .10), transparent 62%);
+      pointer-events: none;
+      opacity: .95;
+    }
+
+    .card-inner {
+      position: relative;
+      display: grid;
+      gap: 12px;
+    }
+
+    .card-title {
+      font-size: 1.0rem;
+      letter-spacing: .2px;
+      font-weight: 400;
+    }
+
+    .card-text {
+      font-family: Arial, sans-serif;
+      font-weight: 700;
+      line-height: 1.45;
+      font-size: .95rem;
+      white-space: pre-wrap;
+    }
+
+    #modalImg {
+      width: 100%;
+      border-radius: 8px;
+      display: none;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+
+    .card-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      margin-top: 2px;
+    }
+
+    .cbtn {
+      border: 0;
+      cursor: pointer;
+      user-select: none;
+      padding: 10px 14px;
+      border-radius: 999px;
+      font-family: Arial, sans-serif;
+      font-weight: 900;
+      letter-spacing: .2px;
+      box-shadow: 0 12px 26px rgba(0, 0, 0, .25), var(--glow);
+      transition: transform .15s ease, opacity .15s ease, background .15s ease, border-color .15s ease;
+      font-size: .85rem;
+    }
+
+    .cbtn:active {
+      transform: translateY(1px);
+      opacity: .92;
+    }
+
+    .cbtn-primary {
+      background: rgba(255, 255, 255, .95) !important;
+      color: #000 !important;
+      text-shadow: none !important;
+    }
+
+    .cbtn-ghost {
+      background: rgba(255, 255, 255, .10) !important;
+      color: rgba(255, 255, 255, .95) !important;
+      border: 1px solid rgba(255, 255, 255, .30) !important;
+    }
+
+    .tiny-note {
+      font-family: Arial, sans-serif;
+      font-size: .72rem;
+      opacity: .8;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>Bantu Lipa kasih bunga buat Febryan</h1>
+
+  <div id="game-area">
+    <div id="game-box">
+      <canvas id="mazeCanvas"></canvas>
+    </div>
+  </div>
+
+  <button class="restart-btn" onclick="setup()">Menyerah & Ulangi</button>
+
+  <!-- POPUP MODAL -->
+  <div class="modal hidden" id="winModal" role="dialog" aria-modal="true">
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-title" id="modalTitle"></div>
+        <img id="modalImg" src="lipfeb.png" alt="foto" />
+        <div class="card-text" id="modalText"></div>
+        <div class="card-actions" id="modalActions"></div>
+        <div class="tiny-note" id="modalNote"> ｡ﾟ•┈୨♡୧┈•ﾟ｡ </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById("mazeCanvas");
+    const ctx = canvas.getContext("2d");
+    const audio = document.getElementById("bg-audio");
+
+    // --- KONFIG ---
+    const TARGET_COLS = 13;
+    const MIN_CELL = 22;
+    const MAX_CELL = 40;
+
+    let cellSize = 30;
+    let rows, cols, maze, player, goal;
+
+    // Load Player Image
+    const playerImg = new Image();
+    playerImg.src = "pala.png";
+    let imageLoaded = false;
+    playerImg.onload = () => { imageLoaded = true; draw(); };
+
+    // Load Goal Image (feb.png)
+    const goalImg = new Image();
+    goalImg.src = "feb.png";
+    let goalLoaded = false;
+    goalImg.onload = () => { goalLoaded = true; draw(); };
+
+    function clamp(n, a, b) { return Math.max(a, Math.min(b, n)); }
+
+    function initSize() {
+      const isMobileLayout = window.innerWidth <= 700;
+      const reservedForControls = isMobileLayout ? 0 : ((60 * 3) + (6 * 2) + 18 + 24);
+      const maxCanvasW = Math.max(220, window.innerWidth - reservedForControls - 24);
+      const reservedH = isMobileLayout ? 260 : 170;
+      const maxCanvasH = Math.max(220, window.innerHeight - reservedH);
+
+      const canvasSize = Math.floor(Math.min(maxCanvasW, maxCanvasH));
+
+      cellSize = clamp(Math.floor(canvasSize / TARGET_COLS), MIN_CELL, MAX_CELL);
+      cols = Math.max(Math.floor(canvasSize / cellSize), 6);
+      rows = Math.max(Math.floor(canvasSize / cellSize), 6);
+
+      canvas.width = cols * cellSize;
+      canvas.height = rows * cellSize;
+    }
+
+    function setup() {
+      initSize();
+      maze = Array.from({ length: rows }, () =>
+        Array.from({ length: cols }, () => ({
+          visited: false,
+          walls: [true, true, true, true]
+        }))
+      );
+
+      generateMaze(0, 0);
+      player = { x: 0, y: 0 };
+      goal = { x: cols - 1, y: rows - 1 };
+      draw();
+    }
+
+    function generateMaze(r, c) {
+      maze[r][c].visited = true;
+
+      const neighbors = [
+        [r - 1, c, 0, 2],
+        [r, c + 1, 1, 3],
+        [r + 1, c, 2, 0],
+        [r, c - 1, 3, 1]
+      ].sort(() => Math.random() - 0.5);
+
+      for (const [nr, nc, wall, opp] of neighbors) {
+        if (nr >= 0 && nr < rows && nc >= 0 && nc < cols && !maze[nr][nc].visited) {
+          maze[r][c].walls[wall] = false;
+          maze[nr][nc].walls[opp] = false;
+          generateMaze(nr, nc);
+        }
+      }
+    }
+
+    function draw() {
+      if (!maze) return;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--line').trim() || "rgba(255,255,255,.95)";
+      const wallW = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--wallw')) || 4;
+      ctx.lineWidth = wallW;
+      ctx.lineCap = "round";
+
+      ctx.shadowColor = "rgba(255,255,255,.55)";
+      ctx.shadowBlur = 12;
+
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          const x = c * cellSize;
+          const y = r * cellSize;
+
+          ctx.beginPath();
+          if (maze[r][c].walls[0]) line(x, y, x + cellSize, y);
+          if (maze[r][c].walls[1]) line(x + cellSize, y, x + cellSize, y + cellSize);
+          if (maze[r][c].walls[2]) line(x, y + cellSize, x + cellSize, y + cellSize);
+          if (maze[r][c].walls[3]) line(x, y, x, y + cellSize);
+          ctx.stroke();
+
+          // Goal Image / Fallback Emoji
+          if (c === goal.x && r === goal.y) {
+            ctx.save();
+            ctx.shadowColor = "rgba(255,255,255,.65)";
+            ctx.shadowBlur = 18;
+            if (goalLoaded) {
+              const padding = 3;
+              ctx.drawImage(
+                goalImg,
+                x + padding,
+                y + padding,
+                cellSize - (padding * 2),
+                cellSize - (padding * 2)
+              );
+            } else {
+              ctx.font = (cellSize - 4) + "px Arial";
+              ctx.textAlign = "center";
+              ctx.textBaseline = "middle";
+              ctx.fillStyle = "rgba(255,255,255,.95)";
+              ctx.fillText("🧑‍💼", x + cellSize / 2, y + cellSize / 2 + 1);
+            }
+            ctx.restore();
+          }
+        }
+      }
+
+      // Player Image
+      if (imageLoaded) {
+        const padding = 3;
+        ctx.save();
+        ctx.shadowColor = "rgba(255,255,255,.65)";
+        ctx.shadowBlur = 16;
+        ctx.drawImage(
+          playerImg,
+          player.x * cellSize + padding,
+          player.y * cellSize + padding,
+          cellSize - (padding * 2),
+          cellSize - (padding * 2)
+        );
+        ctx.restore();
+      } else {
+        ctx.save();
+        ctx.fillStyle = "#fff";
+        ctx.shadowColor = "rgba(255,255,255,.65)";
+        ctx.shadowBlur = 16;
+        ctx.beginPath();
+        ctx.arc(
+          player.x * cellSize + cellSize / 2,
+          player.y * cellSize + cellSize / 2,
+          cellSize / 3,
+          0,
+          Math.PI * 2
+        );
+        ctx.fill();
+        ctx.restore();
+      }
+
+      ctx.shadowBlur = 0;
+      ctx.shadowColor = "transparent";
+    }
+
+    function line(x1, y1, x2, y2) {
+      ctx.moveTo(x1, y1);
+      ctx.lineTo(x2, y2);
+    }
+
+    // ========= POPUP FLOW =========
+    const winModal = document.getElementById("winModal");
+    const modalText = document.getElementById("modalText");
+    const modalActions = document.getElementById("modalActions");
+    const modalImg = document.getElementById("modalImg");
+    const modalTitle = document.getElementById("modalTitle");
+
+    function setActions(buttons) {
+      modalActions.innerHTML = "";
+      buttons.forEach(b => modalActions.appendChild(b));
+    }
+
+    function mkBtn(label, kind, onClick) {
+      const btn = document.createElement("button");
+      btn.className = `cbtn ${kind}`;
+      btn.textContent = label;
+      btn.onclick = onClick;
+      return btn;
+    }
+
+    function openModal() {
+      winModal.classList.remove("hidden");
+      isLocked = true;
+    }
+
+    function closeModal() {
+      winModal.classList.add("hidden");
+      isLocked = false;
+    }
+
+    /* ================== FLOW BARU ================== */
+    function startWinFlow() {
+      modalTitle.textContent = "Horee!";
+      modalImg.style.display = "block"; // Tampilkan lipfeb.png
+      modalText.textContent = "yeayyy bunganya nyampe, suka gaaa?";
+
+      setActions([
+        mkBtn("suka bangetttt", "cbtn-primary", flowStepDua)
+      ]);
+      openModal();
+    }
+
+    function flowStepDua() {
+      modalImg.style.display = "none"; // Sembunyikan gambar agar fokus ke teks (opsional)
+      modalTitle.textContent = "";
+      modalText.textContent = "syukurlah kalo sukaaa. jadi ga badmood lagi nih yaaa?";
+
+      setActions([
+        mkBtn("nggaaa donggg", "cbtn-primary", flowStepTiga)
+      ]);
+    }
+
+    function flowStepTiga() {
+      modalText.textContent = "yippieee!!! sayangkuuu semangat yaa buat besok sidangnya. aku tau banyak yang kamu pikirin setelah sidang jadinya perasaan kamu campur aduk. aku juga tau mimpi kamu besar, dan aku yakin kamu bisa wujudin semuanyaaa!! jadi jangan terlalu forsir tubuh kamu dan jangan terlalu dipikirin ya? aku percaya sama kemampuan kamu, kamu juga harus percaya sama diri kamu sendiri! semoga aku yang selalu nemenin semua proses kamu yaaa. so, jangan bosen2 sama akuuu. aku akan selalu bangga sama kamu, sayanggg -`♡´-";
+      
+      setActions([
+        mkBtn("ciappp cantikkuuuu", "cbtn-primary", flowStepEmpat)
+      ]);
+    }
+
+    function flowStepEmpat() {
+      modalImg.style.display = "none"; // Sembunyikan gambar agar fokus ke teks (opsional)
+      modalTitle.textContent = "";
+      modalText.textContent = "yahhhh udahan ni sayanggg, mau lanjut main?";
+
+      setActions([
+        mkBtn("main lagi deh", "cbtn-ghost", backToGame),
+        mkBtn("udahan aja ah", "cbtn-primary", goBack)
+      ]);
+    }
+
+    function goBack() {
+      window.close();
+    }
+    
+    function backToGame() {
+      closeModal();
+      setup();
+      try { audio.play(); } catch (e) { }
+    }
+
+    // ========= MOVE =========
+    let isLocked = false;
+
+    function move(key) {
+      if (isLocked) return;
+      const { x, y } = player;
+
+      if ((key === "ArrowUp" || key === "w") && !maze[y][x].walls[0]) player.y--;
+      else if ((key === "ArrowRight" || key === "d") && !maze[y][x].walls[1]) player.x++;
+      else if ((key === "ArrowDown" || key === "s") && !maze[y][x].walls[2]) player.y++;
+      else if ((key === "ArrowLeft" || key === "a") && !maze[y][x].walls[3]) player.x--;
+
+      draw();
+      checkWin();
+    }
+
+    function checkWin() {
+      if (player.x === goal.x && player.y === goal.y) {
+        setTimeout(() => {
+          try { audio.pause(); } catch (e) { }
+          startWinFlow();
+        }, 80);
+      }
+    }
+
+    window.addEventListener("keydown", (e) => move(e.key));
+    window.addEventListener("resize", () => setup());
+    setup();
+  </script>
+</body>
+</html>

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CIEEE MAU SIDANGGG</title>
+    <style>
+        body {
+            background-color: white;
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            overflow: hidden; 
+            font-family: 'Arial', sans-serif;
+        }
+
+        .sliding-text {
+            position: absolute;
+            white-space: nowrap; 
+            font-size: 40px; 
+            font-weight: bold;
+            color: #ff3366; 
+            animation: slideLeft 18s linear infinite; 
+            transition: color 0.3s ease, text-shadow 0.3s ease; 
+        }
+
+        .sliding-text:hover {
+            cursor: pointer; 
+            color: #7a4452; 
+            animation-play-state: paused; 
+        }
+
+        @keyframes slideLeft {
+            0% { transform: translateX(100vw); }
+            100% { transform: translateX(-100%); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- --- TAMBAHAN AUDIO --- -->
+    <!-- Atribut autoplay untuk memutar otomatis, file disembunyikan agar tampilan tetap bersih -->
+    <audio id="bg-music" autoplay>
+        <source src="prologue.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="sliding-text" onclick="kembaliDanTutup()">
+        JANGAN BADMOOD LAGI YA SAYANGKUUUU. HARUSSSS HAPPYYY DAN SEMANGAT BESOK SIDANGNYAAA. MWAAAAAAAAAAAAAAAAAAAAAAAAAAAAHHHHHHHHHHHHHHHHHHHHHHHHH 💋💋💋💋💋💋💋💋💋💋
+    </div>
+
+    <script>
+        // --- LOGIKA AUDIO 11 DETIK ---
+        const audio = document.getElementById('bg-music');
+        
+        // Mengecek waktu putar lagu secara terus-menerus
+        audio.addEventListener('timeupdate', function() {
+            // Jika lagu sudah mencapai atau lebih dari 11 detik
+            if (audio.currentTime >= 11) {
+                audio.currentTime = 0; // Kembalikan ke detik ke-0
+                audio.play(); // Putar lagi
+            }
+        });
+
+        // --- LOGIKA KLIK KEMBALI & TUTUP ---
+        function kembaliDanTutup() {
+            window.location.href = 'index.html';
+            
+            setTimeout(function() {
+                window.close();
+            }, 100);
+        }
+    </script>
+
+</body>
+</html>
